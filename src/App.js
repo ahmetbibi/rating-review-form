@@ -1,18 +1,22 @@
 import Product from './components/Product';
+import ProductList from './components/ProductList';
 import React from 'react';
-import { Container, Header } from 'semantic-ui-react';
-// import moduleName from 'module';
-// import logo from './logo.svg';
+import { Container } from 'semantic-ui-react';
+import products from './static/products.json';
 import './App.scss';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 function App() {
+  // const productItems = JSON.parse(products);
   return (
-    <Container text className='container'>
-      <Header as='h1' size='huge'>
-        Product Page
-      </Header>
-      <Product />
-    </Container>
+    <Router>
+      <Container text className='container'>
+        <Switch>
+          <Route exact path='/' render={() => <ProductList products={products} />} />
+          <Route path='/product/:id' render={() => <Product products={products} />} />
+        </Switch>
+      </Container>
+    </Router>
   );
 }
 

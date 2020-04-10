@@ -1,20 +1,23 @@
 import React from 'react';
 import { Item, Label, Header } from 'semantic-ui-react';
-import chair from '../static/chair.jpg';
+import { useParams, Link } from 'react-router-dom';
 
-function Product() {
+function Product({ products }) {
+  // To get the id parameter from the path
+  let { id } = useParams();
+
+  const { name, mediaUrl, price, sku } = products[id - 1];
+
   return (
     <>
-      {/* <h1>Hello from component!!!</h1> */}
-
       <Item.Group>
         <Item>
-          <Item.Image size='medium' src={chair} />
+          <Item.Image size='medium' src={mediaUrl} />
           <Item.Content>
-            <Item.Header>Chair</Item.Header>
+            <Item.Header>{name}</Item.Header>
             <Item.Description>
-              <p>$500</p>
-              <Label>SKU: 102.102.222</Label>
+              <p>${price}</p>
+              <Label>SKU: {sku} </Label>
             </Item.Description>
             <Item.Extra></Item.Extra>
           </Item.Content>
@@ -27,6 +30,9 @@ function Product() {
         sit amet eros. Suspendisse accumsan tortor quis turpis. Sed ante. Vivamus tortor. Duis
         mattis egestas metus.
       </p>
+      <Link to='/' className='btn'>
+        Back To Products
+      </Link>
     </>
   );
 }
