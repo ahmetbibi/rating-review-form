@@ -7,7 +7,6 @@ import './App.scss';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 function App() {
-  // const productItems = JSON.parse(products);
   return (
     <Router>
       <Container text className='container'>

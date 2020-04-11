@@ -1,5 +1,5 @@
 import React from 'react';
-import { Item, Label, Header } from 'semantic-ui-react';
+import { Item, Label, Header, Rating } from 'semantic-ui-react';
 import { useParams, Link } from 'react-router-dom';
 
 function Product({ products }) {
@@ -19,7 +19,9 @@ function Product({ products }) {
               <p>${price}</p>
               <Label>SKU: {sku} </Label>
             </Item.Description>
-            <Item.Extra></Item.Extra>
+            <Item.Extra>
+              <Rating maxRating={5} defaultRating={3} icon='star' size='huge' />
+            </Item.Extra>
           </Item.Content>
         </Item>
       </Item.Group>
