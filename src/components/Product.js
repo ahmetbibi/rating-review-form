@@ -1,36 +1,34 @@
 import React, { useState } from 'react';
-import { Item, Label, Header, Rating, Modal, Button, Divider } from 'semantic-ui-react';
+import { Item, Label, Header, Rating, Divider } from 'semantic-ui-react';
 import { useParams, Link } from 'react-router-dom';
 import ReviewForm from './ReviewForm';
 import Reviews from './Reviews';
 
 function Product({ products }) {
-  // const reviews = [];
-
   const initialState = {
     firstName: '',
     lastName: '',
+    title: '',
     comment: '',
   };
 
-  const [review, setReview] = useState([initialState]);
+  const [review, setReview] = useState(initialState);
   const [rating, setRating] = useState(0);
-  const [isChecked, setChecked] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // To get the id parameter from the path
   let { id } = useParams();
 
   const { name, mediaUrl, price, sku } = products[id - 1];
 
-  function handleRate(e, { rating }) {
-    // let { ratingValue } = review;
-    setRating(() => Number(rating));
-    console.log(rating);
+  function handleOpen() {
+    setModalOpen(true);
   }
 
-  function handleCheck(e) {
-    setChecked(true);
+  function handleRate(e, { rating }) {
+    setRating(() => Number(rating));
+    console.log(rating);
   }
 
   function handleChange(e) {
@@ -41,10 +39,12 @@ function Product({ products }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    const { firstName, lastName, comment } = review;
-    const reviewResult = { firstName, lastName, comment, rating };
-    reviews.push(reviewResult);
-    setReviews((preState) => ({ ...preState, reviews }));
+    const { firstName, lastName, title, comment } = review;
+    reviews.push({ firstName, lastName, title, comment, rating });
+    setReviews(reviews);
+    setReview(initialState);
+    setRating(0);
+    setModalOpen(false);
     console.log(reviews);
   }
 
@@ -60,7 +60,7 @@ function Product({ products }) {
               <Label>SKU: {sku} </Label>
             </Item.Description>
             <Item.Extra>
-              <Rating maxRating={5} defaultRating={3} icon='star' size='huge' />
+              <Rating maxRating={5} defaultRating={4} disabled icon='star' size='huge' />
             </Item.Extra>
             <Divider />
             <Item.Extra>
@@ -69,6 +69,8 @@ function Product({ products }) {
                 handleSubmit={handleSubmit}
                 handleRate={handleRate}
                 rating={rating}
+                handleOpen={handleOpen}
+                modalOpen={modalOpen}
               />
             </Item.Extra>
           </Item.Content>
@@ -88,7 +90,7 @@ function Product({ products }) {
       </Item.Extra>
       <Divider />
 
-      <Header as='h3'>Reviews</Header>
+      <Header as='h1'>Reviews</Header>
       <Reviews reviews={reviews} />
     </>
   );

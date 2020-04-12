@@ -1,15 +1,9 @@
-import React, { useState } from 'react';
-import { Form, Input, TextArea, Checkbox, Button, Rating, Modal, Header } from 'semantic-ui-react';
+import React from 'react';
+import { Form, Input, TextArea, Button, Rating, Modal } from 'semantic-ui-react';
 
 import './styles/ReviewForm.scss';
 
-function ReviewForm({ handleChange, handleSubmit, handleRate, rating }) {
-  const [modalOpen, setModalOpen] = useState(false);
-
-  function handleOpen() {
-    setModalOpen(true);
-  }
-
+function ReviewForm({ handleChange, handleSubmit, handleRate, rating, handleOpen, modalOpen }) {
   return (
     <>
       <Modal
@@ -17,6 +11,8 @@ function ReviewForm({ handleChange, handleSubmit, handleRate, rating }) {
         trigger={<Button onClick={handleOpen}>Write a review</Button>}
         basic
         size='small'
+        dimmer='blurring'
+        open={modalOpen}
       >
         <Modal.Header className='review-main-header'>Write a Review</Modal.Header>
         <Modal.Content>
@@ -27,7 +23,7 @@ function ReviewForm({ handleChange, handleSubmit, handleRate, rating }) {
                 value={rating}
                 control={Rating}
                 maxRating={5}
-                defaultRating={3}
+                defaultRating={0}
                 icon='star'
                 size='large'
                 onRate={handleRate}
@@ -49,13 +45,19 @@ function ReviewForm({ handleChange, handleSubmit, handleRate, rating }) {
                 />
               </Form.Group>
               <Form.Field
+                control={Input}
+                name='title'
+                label='Title'
+                placeholder='Comment title'
+                onChange={handleChange}
+              />
+              <Form.Field
                 control={TextArea}
                 name='comment'
                 label='Review'
                 placeholder='Tell us your experience about this product...'
                 onChange={handleChange}
               />
-              <Form.Field control={Checkbox} label='I agree to the Terms and Conditions' />
               <Form.Field control={Button}>Submit</Form.Field>
             </Form>
           </Modal.Description>
