@@ -5,16 +5,48 @@ import ReviewForm from './ReviewForm';
 import Reviews from './Reviews';
 
 function Product({ products }) {
-  // const [modalOpen, setModalOpen] = useState(false);
+  // const reviews = [];
+
+  const initialState = {
+    firstName: '',
+    lastName: '',
+    comment: '',
+  };
+
+  const [review, setReview] = useState([initialState]);
+  const [rating, setRating] = useState(0);
+  const [isChecked, setChecked] = useState(false);
+  const [reviews, setReviews] = useState([]);
 
   // To get the id parameter from the path
   let { id } = useParams();
 
   const { name, mediaUrl, price, sku } = products[id - 1];
 
-  // function handleOpen() {
-  //   setModalOpen(true);
-  // }
+  function handleRate(e, { rating }) {
+    // let { ratingValue } = review;
+    setRating(() => Number(rating));
+    console.log(rating);
+  }
+
+  function handleCheck(e) {
+    setChecked(true);
+  }
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setReview((preState) => ({ ...preState, [name]: value }));
+    console.log(review);
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const { firstName, lastName, comment } = review;
+    const reviewResult = { firstName, lastName, comment, rating };
+    reviews.push(reviewResult);
+    setReviews((preState) => ({ ...preState, reviews }));
+    console.log(reviews);
+  }
 
   return (
     <>
@@ -32,20 +64,12 @@ function Product({ products }) {
             </Item.Extra>
             <Divider />
             <Item.Extra>
-              <ReviewForm />
-              {/* <Modal
-                trigger={<Button onClick={handleOpen}>Write a review</Button>}
-                basic
-                size='small'
-              >
-                <Modal.Header>Write a Review</Modal.Header>
-                <Modal.Content>
-                  <Modal.Description>
-                    <Header>My review</Header>
-                    <ReviewForm />
-                  </Modal.Description>
-                </Modal.Content>
-              </Modal> */}
+              <ReviewForm
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+                handleRate={handleRate}
+                rating={rating}
+              />
             </Item.Extra>
           </Item.Content>
         </Item>
@@ -65,7 +89,7 @@ function Product({ products }) {
       <Divider />
 
       <Header as='h3'>Reviews</Header>
-      <Reviews />
+      <Reviews reviews={reviews} />
     </>
   );
 }
