@@ -1,51 +1,44 @@
-import React, { useState } from 'react';
-import { Item, Label, Header, Rating, Divider } from 'semantic-ui-react';
+import React, { useState, useEffect } from 'react';
+import { Item, Label, Header, Divider, Button } from 'semantic-ui-react';
 import { useParams, Link } from 'react-router-dom';
 import ReviewForm from './ReviewForm';
 import Reviews from './Reviews';
+import Rating from 'react-rating';
+import './styles/Product.scss';
 
-function Product({ products }) {
-  const initialState = {
-    firstName: '',
-    lastName: '',
-    title: '',
-    comment: '',
-  };
+// To calculate the average rating value
+function calculateAverage(reviews, id) {
+  const filteredReviews = reviews.filter((review) => Number(review.id) === Number(id));
 
-  const [review, setReview] = useState(initialState);
-  const [rating, setRating] = useState(0);
-  const [reviews, setReviews] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
+  const total = filteredReviews.reduce((acc, review) => {
+    acc += review.rating;
+    return acc;
+  }, 0);
 
-  // To get the id parameter from the path
+  return (total / filteredReviews.length).toFixed(1);
+}
+
+function Product({ products, reviews, setReviews }) {
   let { id } = useParams();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [average, setAverage] = useState(0);
 
-  const { name, mediaUrl, price, sku } = products[id - 1];
+  useEffect(() => {
+    const averageValue = calculateAverage(reviews, id);
+    setAverage(averageValue);
+  }, [reviews, id]);
+
+  const { name, mediaUrl, price, sku, description } = products[id - 1];
 
   function handleOpen() {
     setModalOpen(true);
   }
 
-  function handleRate(e, { rating }) {
-    setRating(() => Number(rating));
-    console.log(rating);
-  }
-
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setReview((preState) => ({ ...preState, [name]: value }));
-    console.log(review);
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    const { firstName, lastName, title, comment } = review;
-    reviews.push({ firstName, lastName, title, comment, rating });
-    setReviews(reviews);
-    setReview(initialState);
-    setRating(0);
+  function handleClose(review) {
+    if (review) {
+      setReviews([...reviews, review]);
+    }
     setModalOpen(false);
-    console.log(reviews);
   }
 
   return (
@@ -59,30 +52,27 @@ function Product({ products }) {
               <p>${price}</p>
               <Label>SKU: {sku} </Label>
             </Item.Description>
-            <Item.Extra>
-              <Rating maxRating={5} defaultRating={4} disabled icon='star' size='huge' />
-            </Item.Extra>
+            <Item.Description>
+              <Rating
+                className='star-icon rating'
+                initialRating={average}
+                readonly={true}
+                emptySymbol='fa fa-star-o fa-2x'
+                fullSymbol='fa fa-star fa-2x'
+                fractions={10}
+              />{' '}
+              <span className='average'>{isNaN(average) ? '' : average}</span>
+            </Item.Description>
             <Divider />
             <Item.Extra>
-              <ReviewForm
-                handleChange={handleChange}
-                handleSubmit={handleSubmit}
-                handleRate={handleRate}
-                rating={rating}
-                handleOpen={handleOpen}
-                modalOpen={modalOpen}
-              />
+              <Button onClick={handleOpen}>Write a review</Button>
+              <ReviewForm modalOpen={modalOpen} handleClose={handleClose} productId={id} />
             </Item.Extra>
           </Item.Content>
         </Item>
       </Item.Group>
       <Header as='h3'>About this product</Header>
-      <p>
-        Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque
-        sapien placerat ante. Nulla justo. Aliquam quis turpis eget elit sodales scelerisque. Mauris
-        sit amet eros. Suspendisse accumsan tortor quis turpis. Sed ante. Vivamus tortor. Duis
-        mattis egestas metus.
-      </p>
+      <p>{description}</p>
       <Item.Extra>
         <Link to='/' className='btn'>
           Back To Products
@@ -91,7 +81,8 @@ function Product({ products }) {
       <Divider />
 
       <Header as='h1'>Reviews</Header>
-      <Reviews reviews={reviews} />
+      {reviews.length === 0 && <p>No reviews...</p>}
+      <Reviews reviews={reviews} productId={Number(id)} />
     </>
   );
 }
