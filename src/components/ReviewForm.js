@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import { Form, Input, TextArea, Button, Rating, Modal } from 'semantic-ui-react';
 
-import './styles/ReviewForm.scss';
+const initialState = {
+  firstName: '',
+  lastName: '',
+  comment: '',
+  rating: 0,
+};
 
-function ReviewForm({ modalOpen, handleClose, productId }) {
-  const initialState = {
-    firstName: '',
-    lastName: '',
-    comment: '',
-    rating: 0,
-    id: Number(productId),
-  };
-
+function ReviewForm({ modalOpen, handleClose }) {
   const [review, setReview] = useState(initialState);
 
   function handleChange(e) {
@@ -30,8 +27,8 @@ function ReviewForm({ modalOpen, handleClose, productId }) {
   }
 
   return (
-    <Modal className='review-form' basic size='small' dimmer='blurring' open={modalOpen}>
-      <Modal.Header className='review-main-header'>Write a Review</Modal.Header>
+    <Modal size='small' dimmer='blurring' open={modalOpen}>
+      <Modal.Header>Write a Review</Modal.Header>
       <Modal.Content>
         <Modal.Description>
           <Form onSubmit={handleSubmit}>
