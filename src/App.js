@@ -3,6 +3,7 @@ import ProductList from './components/ProductList';
 import React, { useState } from 'react';
 import { Container } from 'semantic-ui-react';
 import products from './static/products.json';
+import 'font-awesome/css/font-awesome.css';
 import './App.scss';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
